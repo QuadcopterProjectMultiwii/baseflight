@@ -3,6 +3,7 @@
 typedef enum {
     sonar_pwm56,
     sonar_rc78,
+    sonar_PB12_PB13,
 } sonar_config_t;
 
 void hcsr04_init(sonar_config_t config);

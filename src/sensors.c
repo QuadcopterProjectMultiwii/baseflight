@@ -572,7 +572,7 @@ void Mag_getADC(void)
 
 void Sonar_init(void) 
 {
-    hcsr04_init(sonar_rc78);
+    hcsr04_init(cfg.sonar_pinout);
     sensorsSet(SENSOR_SONAR);
     sonarAlt = 0;
 }

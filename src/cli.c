@@ -174,6 +174,7 @@ const clivalue_t valueTable[] = {
     { "baro_noise_lpf", VAR_FLOAT, &cfg.baro_noise_lpf, 0, 1 },
     { "baro_cf", VAR_FLOAT, &cfg.baro_cf, 0, 1 },
     { "moron_threshold", VAR_UINT8, &cfg.moron_threshold, 0, 128 },
+    { "sonar_pinout", VAR_UINT8, &cfg.sonar_pinout, 0, 2 },
     { "mag_declination", VAR_INT16, &cfg.mag_declination, -18000, 18000 },
     { "gps_type", VAR_UINT8, &cfg.gps_type, 0, 3 },
     { "gps_pos_p", VAR_UINT8, &cfg.P8[PIDPOS], 0, 200 },

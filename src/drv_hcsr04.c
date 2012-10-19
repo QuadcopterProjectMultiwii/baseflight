@@ -79,6 +79,13 @@ void hcsr04_init(sonar_config_t config)
         exti_pin_source = GPIO_PinSource1;
         exti_irqn = EXTI1_IRQn;
         break;
+    case sonar_PB12_PB13:
+        trigger_pin = GPIO_Pin_12;   // PB12 - 5v tolerant
+        echo_pin = GPIO_Pin_13;      // PB13 - 5v tolerant
+        exti_line = EXTI_Line13;
+        exti_pin_source = GPIO_PinSource13;
+        exti_irqn = EXTI15_10_IRQn;
+        break;
     }
     
     // tp - trigger pin 

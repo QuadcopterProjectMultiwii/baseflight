@@ -401,11 +401,11 @@ void getEstimatedAltitude(void)
     // apply Complimentary Filter to keep near zero caluculated velocity based on baro velocity
     vel = vel * cfg.baro_cf + baroVel * (1.0f - cfg.baro_cf);
     // vel = constrain(vel, -300, 300); // constrain velocity +/- 300cm/s
-    debug[2] = vel;
+    debug[3] = vel;
     // debug[3] = applyDeadbandFloat(vel, 5);
 
     // D
     BaroPID -= constrain(cfg.D8[PIDALT] * applyDeadbandFloat(vel, 5) / 20, -150, 150);
-    debug[3] = BaroPID;
+    //debug[3] = BaroPID;
 }
 #endif /* BARO */
