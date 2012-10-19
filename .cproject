@@ -127,8 +127,8 @@
 									<listOptionValue builtIn="false" value="USE_STDPERIPH_DRIVER"/>
 									<listOptionValue builtIn="false" value="STM32F10X_MD"/>
 								</option>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.other.otherflags.1742066750" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.other.otherflags" value="-c -fmessage-length=0 -fomit-frame-pointer" valueType="string"/>
-								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.435815562" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std" value="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.gnu99" valueType="enumerated"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.other.otherflags.1742066750" name="Other flags" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.other.otherflags" value="-c -fmessage-length=0 -fomit-frame-pointer" valueType="string"/>
+								<option id="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.435815562" name="Language Standard" superClass="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std" value="org.eclipse.cdt.cross.arm.gnu.c.compiler.option.misc.std.gnu99" valueType="enumerated"/>
 								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input.1078461486" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input"/>
 							</tool>
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.cpp.compiler.release.1375531680" name="ARM Yagarto Mac OS X GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.cpp.compiler.release">
@@ -153,6 +153,30 @@
 							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.printsize.release.967972077" name="ARM Yagarto Mac OS X GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.printsize.release"/>
 						</toolChain>
 					</folderInfo>
+					<folderInfo id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.release.249842944.668808466" name="/" resourcePath="support">
+						<toolChain id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.toolchain.release.1090295923" name="ARM Mac OS X GCC (Yagarto)" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.toolchain.release" unusedChildren="">
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.level.1376252512.1707244273" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.level.1376252512"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.processor.1162176739.2085875922" name="Processor" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.target.processor.1162176739"/>
+							<option id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.level.1612199988" name="Debug level" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.option.debugging.level" value="org.eclipse.cdt.cross.arm.gnu.base.option.debugging.level.none" valueType="enumerated"/>
+							<targetPlatform id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.platform.release" isAbstract="false" name="Mac OS X Platform" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.platform.release"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.assembler.release.91791710" name="ARM Yagarto Mac OS X GCC Assembler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.assembler.release.938224775">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.assembler.base.input.1004235604" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.assembler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.c.compiler.release.1659912617" name="ARM Yagarto Mac OS X GCC C Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.c.compiler.release.714360651">
+								<inputType id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input.1003126007" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input"/>
+							</tool>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.cpp.compiler.release.220772202" name="ARM Yagarto Mac OS X GCC C++ Compiler" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.cpp.compiler.release.1375531680"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.c.linker.release.1667389397" name="ARM Yagarto Mac OS X GCC C Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.c.linker.release.954323557"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.cpp.linker.release.629683559" name="ARM Yagarto Mac OS X GCC C++ Linker" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.cpp.linker.release.661084190"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.archiver.base.1539704955" name="ARM Yagarto Mac OS X GCC Archiver" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.archiver.base.1491242495"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.createflash.release.1174366810" name="ARM Yagarto Mac OS X GNU Create Flash Image" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.createflash.release.280139920"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.createlisting.release.1655907421" name="ARM Yagarto Mac OS X GNU Create Listing" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.createlisting.release.270219971"/>
+							<tool id="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.printsize.release.1062458483" name="ARM Yagarto Mac OS X GNU Print Size" superClass="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.printsize.release.967972077"/>
+						</toolChain>
+					</folderInfo>
+					<sourceEntries>
+						<entry excluding="support" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>
@@ -161,10 +185,17 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="baseflight2.org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.1933116365" name="ARM Cross Target Application" projectType="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf"/>
 	</storageModule>
-	<storageModule moduleId="refreshScope" versionNumber="1">
-		<resource resourceType="PROJECT" workspacePath="/baseflight"/>
+	<storageModule moduleId="refreshScope" versionNumber="2">
+		<configuration configurationName="Release">
+			<resource resourceType="PROJECT" workspacePath="/baseflight"/>
+		</configuration>
+		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/baseflight"/>
+		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
+	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="scannerConfiguration">
 		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
 		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.debug.1722521633;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.debug.1722521633.;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.assembler.debug.1192352500;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.assembler.base.input.1422173635">
@@ -173,12 +204,11 @@
 		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.release.249842944;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.release.249842944.;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.c.compiler.release.714360651;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input.1078461486">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.debug.1722521633;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.debug.1722521633.;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.c.compiler.debug.1411267750;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input.807750742">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCManagedMakePerProjectProfileC"/>
-		</scannerConfigBuildInfo>
 		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.release.249842944;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.release.249842944.;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.assembler.release.938224775;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.assembler.base.input.1317896641">
 			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCManagedMakePerProjectProfileC"/>
 		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.debug.1722521633;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.debug.1722521633.;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.elf.c.compiler.debug.1411267750;org.eclipse.cdt.cross.arm.gnu.yagarto.macosx.c.compiler.base.input.807750742">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.cross.arm.gnu.ARM_YG_GCCManagedMakePerProjectProfileC"/>
+		</scannerConfigBuildInfo>
 	</storageModule>
-	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>
