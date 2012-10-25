@@ -46,11 +46,11 @@ void hmc5883lInit(void)
 {
     GPIO_InitTypeDef GPIO_InitStructure;
 
-    // PB12 - MAG_DRDY output on rev4 hardware
-    GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
-    GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
-    GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOB, &GPIO_InitStructure);
+    // PB12 - MAG_DRDY output on rev4 hardware ?never used?
+    //GPIO_InitStructure.GPIO_Pin = GPIO_Pin_12;
+    //GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
+    //GPIO_InitStructure.GPIO_Mode = GPIO_Mode_IN_FLOATING;
+    //GPIO_Init(GPIOB, &GPIO_InitStructure);
 
     delay(100);
     i2cWrite(MAG_ADDRESS, ConfigRegA, SampleAveraging_8 << 5 | DataOutputRate_75HZ << 2 | NormalOperation);
