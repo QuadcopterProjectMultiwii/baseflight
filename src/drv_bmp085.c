@@ -6,7 +6,7 @@ static uint16_t convOverrun = 0;
 
 #define BARO_OFF                 digitalLo(BARO_GPIO, BARO_PIN);
 #define BARO_ON                  digitalHi(BARO_GPIO, BARO_PIN);
-
+/*
 // EXTI14 for BMP085 End of Conversion Interrupt
 void EXTI15_10_IRQHandler(void)
 {
@@ -15,7 +15,7 @@ void EXTI15_10_IRQHandler(void)
         convDone = true;
     }
 }
-
+*/
 typedef struct {
     int16_t ac1;
     int16_t ac2;
@@ -97,7 +97,7 @@ bool bmp085Detect(baro_t *baro)
 
     if (bmp085InitDone)
         return true;
-
+		/*Deactivate obsolete baro code ?
     // PC13, PC14 (Barometer XCLR reset output, EOC input)
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_13;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
@@ -122,6 +122,7 @@ bool bmp085Detect(baro_t *baro)
     NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0x0F;
     NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&NVIC_InitStructure);
+		*/
 
     delay(20); // datasheet says 10ms, we'll be careful and do 20. this is after ms5611 driver kills us, so longer the better.
 
@@ -215,7 +216,7 @@ static int32_t bmp085_get_pressure(uint32_t up)
 
 static void bmp085_start_ut(void)
 {
-    convDone = false;
+//    convDone = false;
     i2cWrite(BMP085_I2C_ADDR, BMP085_CTRL_MEAS_REG, BMP085_T_MEASURE);
 }
 
@@ -223,15 +224,15 @@ static void bmp085_get_ut(void)
 {
     uint8_t data[2];    
     uint16_t timeout = 10000;
-
-    // wait in case of cockup
+		
+/*    // wait in case of cockup
     if (!convDone)
         convOverrun++;
 #if 0
     while (!convDone && timeout-- > 0) {
         __NOP();
     }
-#endif
+#endif */
     i2cRead(BMP085_I2C_ADDR, BMP085_ADC_OUT_MSB_REG, 2, data);
     bmp085_ut = (data[0] << 8) | data[1];
 }
@@ -253,7 +254,7 @@ static void bmp085_get_up(void)
 {
     uint8_t data[3];
     uint16_t timeout = 10000;
-    
+/*    
     // wait in case of cockup
     if (!convDone)
         convOverrun++;
@@ -261,7 +262,7 @@ static void bmp085_get_up(void)
     while (!convDone && timeout-- > 0) {
         __NOP();
     }
-#endif
+#endif */
     i2cRead(BMP085_I2C_ADDR, BMP085_ADC_OUT_MSB_REG, 3, data);
     bmp085_up = (((uint32_t) data[0] << 16) | ((uint32_t) data[1] << 8) | (uint32_t) data[2]) >> (8 - bmp085.oversampling_setting);
 }
