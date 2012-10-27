@@ -384,10 +384,10 @@ void getEstimatedAltitude(void)
         if(sonarAlt <0 || sonarAlt> 400) sonarAlt = lastSonarAlt;//error-> keep last value
         else lastSonarAlt = sonarAlt;
 
-        if(sonarAlt < 200 && sonarAlt!=0)//under 2.0meters height -> use sonar 
+        if(sonarAlt < 200 && sonarAlt!=0)//under 2.0m height -> use sonar 
         {
             EstAlt = EstAlt*0.1f + (BaroHome+sonarAlt)*0.9f;
-            BaroHome = BaroHome*0.9375f + (baroHigh*10.0f/(cfg.baro_tab_size - 1))*0.0625f;
+            BaroHome = BaroHome*0.9375f + ((baroHigh*10.0f/(cfg.baro_tab_size - 1))-sonarAlt)*0.0625f; //update Barohome
         }
         else //above 2m
         {
