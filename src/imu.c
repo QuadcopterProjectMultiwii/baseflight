@@ -357,6 +357,7 @@ void getEstimatedAltitude(void)
     static int16_t lastSonarAlt = 0;
     static int32_t lastBaroAlt;
     float baroVel;
+	static uint8_t sonarErrorCount=0;
 
     if ((int32_t)(currentTime - deadLine) < UPDATE_INTERVAL)
         return;
@@ -381,7 +382,18 @@ void getEstimatedAltitude(void)
             BaroHome = BaroHome*0.9f + (baroHigh*10.0f/(cfg.baro_tab_size - 1))*0.1f; // play with optimal coef. here
         }
 
-        if(sonarAlt <0 || sonarAlt> 400) sonarAlt = lastSonarAlt;//error-> keep last value
+        if(sonarAlt <0 || sonarAlt> 1000) // needs better implementation
+                {
+                sonarAlt = lastSonarAlt;//error-> keep last value
+                sonarErrorCount++;
+
+                if(errorcount > 20) //avoid that sonarAlt gets stuck at the same value for too long and switch to baro
+                    {
+                    sonarAlt = 3000;
+                    lastSonarAlt = 3000;
+                    sonarErrorCount = 0;
+                    }
+                }
         else lastSonarAlt = sonarAlt;
 
         if(sonarAlt < 200 && sonarAlt!=0)//under 2.0m height -> use sonar 
