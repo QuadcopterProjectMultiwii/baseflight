@@ -90,9 +90,9 @@ static int32_t bmp085_calculate(void);
 
 bool bmp085Detect(baro_t *baro)
 {
-    GPIO_InitTypeDef GPIO_InitStructure;
+/*    GPIO_InitTypeDef GPIO_InitStructure;
     EXTI_InitTypeDef EXTI_InitStructure;
-    NVIC_InitTypeDef NVIC_InitStructure;
+    NVIC_InitTypeDef NVIC_InitStructure;*/
     uint8_t data;
 
     if (bmp085InitDone)
@@ -146,7 +146,7 @@ bool bmp085Detect(baro_t *baro)
         baro->calculate = bmp085_calculate;
         return true;
     }
-    BARO_OFF;
+    //BARO_OFF;
     return false;
 }
 

@@ -348,11 +348,13 @@ void getEstimatedAltitude(void)
     static int16_t baroHistTab[BARO_TAB_SIZE_MAX];
     static int8_t baroHistIdx;
     static int32_t baroHigh;
+    static int32_t BaroHome;
     uint32_t dTime;
     int16_t error;
     float invG;
     int16_t accZ;
     static float vel = 0.0f;
+    static int16_t lastSonarAlt = 0;
     static int32_t lastBaroAlt;
     float baroVel;
 
@@ -370,8 +372,28 @@ void getEstimatedAltitude(void)
     if (baroHistIdx == cfg.baro_tab_size) 
         baroHistIdx = 0;
 
+    if(cfg.sonar_althold==0)
     EstAlt = EstAlt * cfg.baro_noise_lpf + (baroHigh * 10.0f / (cfg.baro_tab_size - 1)) * (1.0f - cfg.baro_noise_lpf); // additional LPF to reduce baro noise
+    else
+    {
+        if(!f.ARMED) //init offset till motors not armed
+        { 
+            BaroHome = BaroHome*0.9f + (baroHigh*10.0f/(cfg.baro_tab_size - 1))*0.1f; // play with optimal coef. here
+        }
 
+        if(sonarAlt <0 || sonarAlt> 400) sonarAlt = lastSonarAlt;//error-> keep last value
+        else lastSonarAlt = sonarAlt;
+
+        if(sonarAlt < 200 && sonarAlt!=0)//under 2.0meters height -> use sonar 
+        {
+            EstAlt = EstAlt*0.1f + (BaroHome+sonarAlt)*0.9f;
+            BaroHome = BaroHome*0.9375f + (baroHigh*10.0f/(cfg.baro_tab_size - 1))*0.0625f;
+        }
+        else //above 2m
+        {
+        EstAlt = EstAlt * cfg.baro_noise_lpf + (baroHigh * 10.0f / (cfg.baro_tab_size - 1)) * (1.0f - cfg.baro_noise_lpf); // additional LPF to reduce baro noise
+        }
+    }
     // P
     error = constrain(AltHold - EstAlt, -300, 300);
     error = applyDeadband16(error, 10); // remove small P parametr to reduce noise near zero position

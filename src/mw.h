@@ -158,8 +158,9 @@ typedef struct config_t {
     uint8_t baro_tab_size;                  // size of baro filter array
     float baro_noise_lpf;                   // additional LPF to reduce baro noise
     float baro_cf;                          // apply Complimentary Filter to keep the calculated velocity based on baro velocity (i.e. near real velocity)
-    uint8_t moron_threshold;                // people keep forgetting that moving model while init results in wrong gyro offsets. and then they never reset gyro. so this is now on by default.
+    uint8_t sonar_althold;                  // enable/disable sonar althold
     uint8_t sonar_pinout;                   // choose sonar pinout 0=sonar_pwm56,1=sonar_rc78,2=sonar_PB12_PB13
+    uint8_t moron_threshold;                // people keep forgetting that moving model while init results in wrong gyro offsets. and then they never reset gyro. so this is now on by default.
 
     uint16_t activate[CHECKBOXITEMS];       // activate switches
     uint8_t vbatscale;                      // adjust this to match battery voltage to reported value

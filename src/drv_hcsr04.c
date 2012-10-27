@@ -54,6 +54,10 @@ void EXTI9_5_IRQHandler(void)
 {
     ECHO_EXTI_IRQHandler();
 }
+void EXTI15_10_IRQHandler(void)
+{
+    ECHO_EXTI_IRQHandler();
+}
 
 void hcsr04_init(sonar_config_t config)
 {
