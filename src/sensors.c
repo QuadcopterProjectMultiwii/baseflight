@@ -20,6 +20,25 @@ sensor_t gyro;                      // gyro access functions
 baro_t baro;                        // barometer access functions
 uint8_t accHardware = ACC_DEFAULT;  // which accel chip is used/detected
 
+static void dummyGyroInit(void)
+{
+	//Nothing to init
+}
+
+static void dummyGyroRead(int16_t *gyroData)
+{
+	//Dummy gyro just stays at 0
+	gyroData[0] = 0;
+    gyroData[1] = 0;
+    gyroData[2] = 0;
+}
+
+static void dummyGyroAlign(int16_t *gyroData)
+{
+	//Nothing to align
+}
+
+
 #ifdef FY90Q
 // FY90Q analog gyro/acc
 void sensorsAutodetect(void)
@@ -43,7 +62,12 @@ void sensorsAutodetect(void)
         havel3g4200d = true;
     } else if (!mpu3050Detect(&gyro)) {
         // if this fails, we get a beep + blink pattern. we're doomed, no gyro or i2c error.
-        failureMode(3);
+        //failureMode(3);
+
+    	gyro.init = dummyGyroInit;
+    	gyro.read = dummyGyroRead;
+    	gyro.align = dummyGyroAlign;
+    	gyro.temperature = 0;
     }
 
     // Accelerometer. Fuck it. Let user break shit.

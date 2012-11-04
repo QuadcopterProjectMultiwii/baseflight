@@ -4,6 +4,7 @@
 #define MPU3050_ADDRESS         0x68
 
 // Registers
+#define MPU3050_WHO_AM_I        0x00
 #define MPU3050_SMPLRT_DIV      0x15
 #define MPU3050_DLPF_FS_SYNC    0x16
 #define MPU3050_INT_CFG         0x17
@@ -34,8 +35,13 @@ static void mpu3050ReadTemp(int16_t *tempData);
 bool mpu3050Detect(sensor_t *gyro)
 {
     bool ack;
+    uint8_t deviceid;
 
     delay(25); // datasheet page 13 says 20ms. other stuff could have been running meanwhile. but we'll be safe
+
+    ack = i2cRead( MPU3050_ADDRESS, MPU3050_WHO_AM_I,1, &deviceid  );
+    if ( !ack || ( (deviceid & 0xfe) != MPU3050_ADDRESS ) )
+    	return false;
 
     ack = i2cWrite(MPU3050_ADDRESS, MPU3050_SMPLRT_DIV, 0);
     if (!ack)
@@ -94,8 +100,8 @@ static void mpu3050Init(void)
 static void mpu3050Align(int16_t *gyroData)
 {
     // official direction is RPY
-    gyroData[0] = gyroData[0];
-    gyroData[1] = gyroData[1];
+//    gyroData[0] = gyroData[0];
+//    gyroData[1] = gyroData[1];
     gyroData[2] = -gyroData[2];
 }
 
