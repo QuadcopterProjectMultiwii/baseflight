@@ -27,7 +27,6 @@ static char cliBuffer[48];
 static uint32_t bufferIndex = 0;
 
 static float _atof(const char *p);
-static char *ftoa(float x, char *floatString);
 
 // sync this with MultiType enum from mw.h
 const char * const mixerNames[] = {
@@ -56,8 +55,8 @@ const char * const accNames[] = {
 };
 
 typedef struct {
-    char *name;
-    char *param;
+    const char *name;
+    const char *param;
     void (*func)(char *cmdline);
 } clicmd_t;
 
@@ -79,12 +78,26 @@ const clicmd_t cmdTable[] = {
 
 typedef enum {
     VAR_UINT8,
-    VAR_INT8,
     VAR_UINT16,
-    VAR_INT16,
     VAR_UINT32,
+    VAR_INT8,
+    VAR_INT16,
+    VAR_INT32,
     VAR_FLOAT
 } vartype_e;
+
+typedef union {
+	int32_t i32;
+	uint32_t u32;
+
+	int8_t i8;
+	uint8_t u8;
+
+	int16_t i16;
+	uint16_t u16;
+
+	float f32;
+} cliNumber_t;
 
 typedef struct {
     const char *name;
@@ -193,50 +206,11 @@ const clivalue_t valueTable[] = {
     { "p_level", VAR_UINT8, &cfg.P8[PIDLEVEL], 0, 200 },
     { "i_level", VAR_UINT8, &cfg.I8[PIDLEVEL], 0, 200 },
     { "d_level", VAR_UINT8, &cfg.D8[PIDLEVEL], 0, 200 },
+    { "ledPattern", VAR_UINT32, &cfg.ledtoggle_pattern, 0, 0 }
 };
 
 #define VALUE_COUNT (sizeof(valueTable) / sizeof(valueTable[0]))
 
-static void cliSetVar(const clivalue_t *var, const int32_t value);
-static void cliPrintVar(const clivalue_t *var, uint32_t full);
-
-#ifndef HAVE_ITOA_FUNCTION
-
-/*
-** The following two functions together make up an itoa()
-** implementation. Function i2a() is a 'private' function
-** called by the public itoa() function.
-**
-** itoa() takes three arguments:
-**        1) the integer to be converted,
-**        2) a pointer to a character conversion buffer,
-**        3) the radix for the conversion
-**           which can range between 2 and 36 inclusive
-**           range errors on the radix default it to base10
-** Code from http://groups.google.com/group/comp.lang.c/msg/66552ef8b04fe1ab?pli=1
-*/
-
-static char *i2a(unsigned i, char *a, unsigned r)
-{
-    if (i / r > 0) 
-        a = i2a(i / r, a, r);
-    *a = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"[i % r];
-    return a + 1;
-}
-
-char *itoa(int i, char *a, int r)
-{
-    if ((r < 2) || (r > 36))
-        r = 10;
-    if (i < 0) {
-        *a = '-';
-        *i2a(-(unsigned)i, a + 1, r) = 0;
-    } else 
-        *i2a(i, a, r) = 0;
-    return a;
-} 
-
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////
 // String to Float Conversion
@@ -326,55 +300,80 @@ static float _atof(const char *p)
     return sign * (frac ? (value / scale) : (value * scale));
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// FTOA
-///////////////////////////////////////////////////////////////////////////////
-static char *ftoa(float x, char *floatString)
-{
-    int32_t value;
-    char intString1[12];
-    char intString2[12] = { 0, };
-    char *decimalPoint = ".";
-    uint8_t dpLocation;
-
-    if (x > 0)                  // Rounding for x.xxx display format
-        x += 0.0005f;
+//Helper function to convert characters into a number
+static int a2d( char ch ) {
+    if (ch >= '0' && ch <= '9')
+        return ch - '0';
+    else if (ch >= 'a' && ch <= 'f')
+        return ch - 'a' + 10;
+    else if (ch >= 'A' && ch <= 'F')
+        return ch - 'A' + 10;
     else
-        x -= 0.0005f;
+        return -1;
+}
 
-    value = (int32_t) (x * 1000.0f);    // Convert float * 1000 to an integer
+//Try to make an integer from a string, signed or unsigned
+static bool makeInt( const char *p, bool us, void *result ) {
+	char ch;
+	uint32_t value = 0;
+//	uint32_t max;
+	unsigned int count = 0;
+	unsigned int base;
+	bool negative = false;
 
-    itoa(abs(value), intString1, 10);   // Create string from abs of integer value
-
-    if (value >= 0)
-        intString2[0] = ' ';    // Positive number, add a pad space
-    else
-        intString2[0] = '-';    // Negative number, add a negative sign
-
-    if (strlen(intString1) == 1) {
-        intString2[1] = '0';
-        intString2[2] = '0';
-        intString2[3] = '0';
-        strcat(intString2, intString1);
-    } else if (strlen(intString1) == 2) {
-        intString2[1] = '0';
-        intString2[2] = '0';
-        strcat(intString2, intString1);
-    } else if (strlen(intString1) == 3) {
-        intString2[1] = '0';
-        strcat(intString2, intString1);
-    } else {
-        strcat(intString2, intString1);
+	// Skip leading white spaces
+    while (white_space(*p) ) {
+        ++p;
     }
 
-    dpLocation = strlen(intString2) - 3;
+	//Check for a negative value
+    if ( *p == '-' ) {
+    	//Don't support negative with unsigned
+    	if ( us )
+    		return false;
+    	negative = true;
+    	++p;
+    }
 
-    strncpy(floatString, intString2, dpLocation);
-    floatString[dpLocation] = '\0';
-    strcat(floatString, decimalPoint);
-    strcat(floatString, intString2 + dpLocation);
+    //Check for hexadecimal input
+    if ( *p == 'x' || *p == 'X' ) {
+    	base = 16;
+    	++p;
+//		max = (( 1<< 32) - 16) / 16;
+    //Check for binary input
+	} else if ( *p == 'b' || *p == 'B' ) {
+		base = 2;
+    	++p;
+//		max = (( 1<< 32) - 2) / 2;
+	//Regular old decimal input
+    } else {
+    	base = 10;
+//		max = (( 1<< 32) - 10) / 10;
+    }
 
-    return floatString;
+	for ( ch = *p; ch; p++, ch = *p, count++ ) {
+		unsigned int add = a2d( ch );
+		//Easy check against base and -1
+		if ( add >= base ) {
+			return false;
+		}
+		//TODO check if you'd overflow the value?
+		value = value * base + add;
+	}
+	//TODO check for additional chars?
+	if ( count == 0 )
+		return false;
+
+	if ( us ) {
+		*(uint32_t*)result = value;
+	} else if ( negative ) {
+		//TODO check for signed limits
+		*(int32_t*)result = -(int32_t)value;
+	} else {
+		//TODO check for signed limits
+		*(int32_t*)result = (int32_t)value;
+	}
+	return true;
 }
 
 static void cliPrompt(void)
@@ -393,7 +392,6 @@ static void cliCMix(char *cmdline)
     int i, check = 0;
     int num_motors = 0;
     uint8_t len;
-    char buf[16];
     float mixsum[3];
     char *ptr;
 
@@ -407,10 +405,10 @@ static void cliCMix(char *cmdline)
             mixsum[i] = 0.0f;
             num_motors++;
             printf("#%d:\t", i + 1);
-            printf("%s\t", ftoa(cfg.customMixer[i].throttle, buf));
-            printf("%s\t", ftoa(cfg.customMixer[i].roll, buf));
-            printf("%s\t", ftoa(cfg.customMixer[i].pitch, buf));
-            printf("%s\r\n", ftoa(cfg.customMixer[i].yaw, buf));
+            printf("%f\t", cfg.customMixer[i].throttle );
+            printf("%f\t", cfg.customMixer[i].roll );
+            printf("%f\t", cfg.customMixer[i].pitch );
+            printf("%f\r\n", cfg.customMixer[i].yaw );
         }
         for (i = 0; i < num_motors; i++) {
             mixsum[0] += cfg.customMixer[i].roll;
@@ -628,66 +626,99 @@ static void cliSave(char *cmdline)
     systemReset(false);
 }
 
-static void cliPrintVar(const clivalue_t *var, uint32_t full)
+static void cliPrintVar( const clivalue_t *var, int full)
 {
-    int32_t value = 0;
-    char buf[8];
-
     switch (var->type) {
-        case VAR_UINT8:
-            value = *(uint8_t *)var->ptr;
-            break;
+	case VAR_INT8:
+		printf( "%d", *(int8_t *)var->ptr );
+		break;
+	case VAR_INT16:
+		printf( "%d", *(int16_t *)var->ptr );
+		break;
+	case VAR_INT32:
+		printf( "%d", *(int32_t *)var->ptr );
+		break;
 
-        case VAR_INT8:
-            value = *(int8_t *)var->ptr;
-            break;
+	case VAR_UINT8:
+		printf( "%u", *(uint8_t *)var->ptr );
+		break;
+	case VAR_UINT16:
+		printf( "%u", *(uint16_t *)var->ptr );
+		break;
+	case VAR_UINT32:
+		printf( "%u", *(uint32_t *)var->ptr );
+		break;
 
-        case VAR_UINT16:
-            value = *(uint16_t *)var->ptr;
-            break;
-
-        case VAR_INT16:
-            value = *(int16_t *)var->ptr;
-            break;
-
-        case VAR_UINT32:
-            value = *(uint32_t *)var->ptr;
-            break;
-
-        case VAR_FLOAT:
-            printf("%s", ftoa(*(float *)var->ptr, buf));
-            if (full) {
-                printf(" %s", ftoa((float)var->min, buf));
-                printf(" %s", ftoa((float)var->max, buf));
-            }
-            return; // return from case for float only
+	case VAR_FLOAT:
+		printf( "%f", *(float *)var->ptr );
+		break;
     }
-    printf("%d", value);
-    if (full)
+    //TODO proper limits for unsigned 32bits
+    if (full) {
         printf(" %d %d", var->min, var->max);
+    }
 }
 
-static void cliSetVar(const clivalue_t *var, const int32_t value)
+//Return true when the setting was succesful
+static bool cliSetVar( const clivalue_t *var, const char* input )
 {
     switch (var->type) {
-        case VAR_UINT8:
         case VAR_INT8:
-            *(char *)var->ptr = (char)value;
-            break;
-
-        case VAR_UINT16:
         case VAR_INT16:
-            *(short *)var->ptr = (short)value;
-            break;
-
+        case VAR_INT32:
+        {
+        	int32_t value = 0;
+        	if ( !makeInt( input, false, &value ) )
+        		return false;
+        	//Check for limits being and if you check against them
+        	if( var->min | var->max ) {
+        		if ( value < var->min || value > var->max )
+        			return false;
+        	}
+        	//Write the value
+        	if ( var->type == VAR_INT8 ) {
+        		*((int8_t*)var->ptr) = (int8_t)value;
+        	} else if ( var->type == VAR_INT16 ) {
+        		*((int16_t*)var->ptr) = (int16_t)value;
+        	} else if ( var->type == VAR_INT32 ) {
+        		*((int32_t*)var->ptr) = (int32_t)value;
+        	}
+        	break;
+        }
+        case VAR_UINT8:
+        case VAR_UINT16:
         case VAR_UINT32:
-            *(int *)var->ptr = (int)value;
-            break;
-
+        {
+        	uint32_t value = 0;
+        	if ( !makeInt( input, true, &value ) )
+        		return false;
+        	//Check for limits being and if you check against them
+        	if( var->min | var->max ) {
+        		if ( value < (uint32_t)var->min || value > (uint32_t)var->max )
+        			return false;
+        	}
+        	//Write the value
+        	if ( var->type == VAR_UINT8 ) {
+        		*((uint8_t*)var->ptr) = (uint8_t)value;
+        	} else if ( var->type == VAR_UINT16 ) {
+        		*((uint16_t*)var->ptr) = (uint16_t)value;
+        	} else if ( var->type == VAR_UINT32 ) {
+        		*((uint32_t*)var->ptr) = (uint32_t)value;
+        	}
+        	break;
+        }
         case VAR_FLOAT:
-            *(float *)var->ptr = *(float *)&value;
-            break;
-    }
+        {
+        	float value = _atof( input );
+        	if( var->min | var->max ) {
+        		if ( value < var->min || value > var->max )
+        			return false;
+        	}
+        	*((float*)var->ptr) = value;
+        	break;
+        }
+    }	//endof of switch
+    return true;
 }
 
 static void cliSet(char *cmdline)
@@ -696,8 +727,6 @@ static void cliSet(char *cmdline)
     uint32_t len;
     const clivalue_t *val;
     char *eqptr = NULL;
-    int32_t value = 0;
-    float valuef = 0;
 
     len = strlen(cmdline);
 
@@ -713,14 +742,11 @@ static void cliSet(char *cmdline)
         // has equal, set var
         eqptr++;
         len--;
-        value = atoi(eqptr);
-        valuef = _atof(eqptr);
         for (i = 0; i < VALUE_COUNT; i++) {
             val = &valueTable[i];
-            if (strncasecmp(cmdline, valueTable[i].name, strlen(valueTable[i].name)) == 0) {
-                if (valuef >= valueTable[i].min && valuef <= valueTable[i].max) { // here we compare the float value since... it should work, RIGHT?
-                    cliSetVar(val, valueTable[i].type == VAR_FLOAT ? *(uint32_t *)&valuef : value); // this is a silly dirty hack. please fix me later.
-                    printf("%s set to ", valueTable[i].name);
+            if (strncasecmp(cmdline, val->name, strlen(val->name)) == 0) {
+            	if ( cliSetVar( val, eqptr ) ) {
+                    printf("%s set to ", val->name);
                     cliPrintVar(val, 0);
                 } else {
                     uartPrint("ERR: Value assignment out of range\r\n");

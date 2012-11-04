@@ -259,6 +259,9 @@ static void resetConf(void)
     // serial (USART1) baudrate
     cfg.serial_baudrate = 115200;
 
+    // led toggle to the fastest on/off pattern
+    cfg.ledtoggle_pattern = 0x55555555;
+
     // custom mixer. clear by defaults.
     for (i = 0; i < MAX_MOTORS; i++)
         cfg.customMixer[i].throttle = 0.0f;
