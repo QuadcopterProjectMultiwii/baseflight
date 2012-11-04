@@ -297,7 +297,8 @@ void tfp_format(void *putp, putcf putf, char *fmt, va_list va)
                 break;
 #ifdef 	PRINTF_FLOAT_SUPPORT
             case 'f':
-            	f2a( va_arg(va, unsigned int), digits >= 0 ? digits : PRINTF_FLOAT_DIGITS, bf );
+            	//float will always get passed as double as an argument
+            	f2a( va_arg(va, double), digits >= 0 ? digits : PRINTF_FLOAT_DIGITS, bf );
                 putchw(putp, putf, w, lz, bf);
                 break;
 #endif
