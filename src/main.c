@@ -59,6 +59,9 @@ int main(void)
 
     serialInit(cfg.serial_baudrate);
 
+    //Init the led toggle
+    ledToggleInit( true );
+
     // We have these sensors
 #ifndef FY90Q
     // AfroFlight32
@@ -147,6 +150,7 @@ int main(void)
         loop();
     }
 }
+
 
 void HardFault_Handler(void)
 {

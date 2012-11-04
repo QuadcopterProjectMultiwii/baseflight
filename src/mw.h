@@ -233,6 +233,8 @@ typedef struct config_t {
     // serial(uart1) baudrate
     uint32_t serial_baudrate;
 
+    uint32_t ledtoggle_pattern;             //32bit bit pattern to have flickering led patterns
+
     motorMixer_t customMixer[MAX_MOTORS];   // custom mixtable
     uint8_t magic_ef;                       // magic number, should be 0xEF
     uint8_t chk;                            // XOR checksum

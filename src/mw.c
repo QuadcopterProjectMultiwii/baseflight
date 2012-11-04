@@ -375,6 +375,9 @@ void loop(void)
             }
         }
 
+        //Update the leds every frame, must also be called if leds are disabled now
+        ledToggleUpdate( true );
+
         if (feature(FEATURE_INFLIGHT_ACC_CAL)) {
             if (AccInflightCalibrationArmed && f.ARMED && rcData[THROTTLE] > cfg.mincheck && !rcOptions[BOXARM]) {   // Copter is airborne and you are turning it off via boxarm : start measurement
                 InflightcalibratingA = 50;
