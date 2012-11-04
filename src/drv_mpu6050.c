@@ -2,7 +2,7 @@
 
 // MPU6050, Standard address 0x68
 // MPU_INT on PB13 on rev4 hardware
-#define MPU6050_ADDRESS         0x68
+#define MPU6050_ADDRESS         0x69
 
 // Experimental DMP support
 // #define MPU6050_DMP
