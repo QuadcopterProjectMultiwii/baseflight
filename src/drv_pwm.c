@@ -458,7 +458,7 @@ bool pwmInit(drv_pwm_config_t *init)
             continue;
 
         // hacks to allow current functionality
-        if (mask & (TYPE_IP | TYPE_IW) && !init->enableInput)
+        if ( ( mask & (TYPE_IP | TYPE_IW) ) && !init->enableInput)
             mask = 0;
 
         if (init->useServos && !init->airplane) {
