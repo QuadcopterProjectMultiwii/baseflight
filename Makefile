@@ -64,6 +64,7 @@ NAZE_SRC	 = drv_adc.c \
 		   drv_hcsr04.c \
 		   drv_hmc5883l.c \
 		   drv_ledring.c \
+		   drv_ledtoggle.c \
 		   drv_mma845x.c \
 		   drv_mpu3050.c \
 		   drv_mpu6050.c \
