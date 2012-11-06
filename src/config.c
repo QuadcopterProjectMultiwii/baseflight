@@ -123,7 +123,7 @@ void checkFirstTime(bool reset)
 static void resetConf(void)
 {
     int i;
-    const int8_t default_align[3][3] = { /* GYRO */ { 0, 0, 0 }, /* ACC */ { 0, 0, 0 }, /* MAG */ { -2, -3, 1 } };
+    const int8_t default_align[3][3] = { /* GYRO */ { 1, 2, -3 }, /* ACC */ { -2, 1, 0 }, /* MAG */ { 2, -3, -1 } };
 
     memset(&cfg, 0, sizeof(config_t));
 
