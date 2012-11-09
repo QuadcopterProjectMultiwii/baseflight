@@ -172,6 +172,7 @@ const clivalue_t valueTable[] = {
     { "mpu6050_scale", VAR_UINT8, &cfg.mpu6050_scale, 0, 1 },
     { "baro_tab_size", VAR_UINT8, &cfg.baro_tab_size, 0, BARO_TAB_SIZE_MAX },
     { "baro_noise_lpf", VAR_FLOAT, &cfg.baro_noise_lpf, 0, 1 },
+    { "baro_home_lpf", VAR_FLOAT, &cfg.baro_home_lpf, 0, 1 },
     { "baro_cf", VAR_FLOAT, &cfg.baro_cf, 0, 1 },
     { "sonar_althold", VAR_UINT8, &cfg.sonar_althold, 0, 1 },
     { "sonar_pinout", VAR_UINT8, &cfg.sonar_pinout, 0, 2 },

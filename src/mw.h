@@ -157,6 +157,7 @@ typedef struct config_t {
     uint8_t mpu6050_scale;                  // seems es/non-es variance between MPU6050 sensors, half my boards are mpu6000ES, need this to be dynamic. fucking invenshit won't release chip IDs so I can't autodetect it.
     uint8_t baro_tab_size;                  // size of baro filter array
     float baro_noise_lpf;                   // additional LPF to reduce baro noise
+    float baro_home_lpf                     // LPF for Barohome used with sonar
     float baro_cf;                          // apply Complimentary Filter to keep the calculated velocity based on baro velocity (i.e. near real velocity)
     uint8_t sonar_althold;                  // enable/disable sonar althold
     uint8_t sonar_pinout;                   // choose sonar pinout 0=sonar_pwm56,1=sonar_rc78,2=sonar_PB12_PB13

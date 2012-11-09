@@ -5,10 +5,10 @@ int16_t gyroADC[3], accADC[3], accSmooth[3], magADC[3];
 float accLPFVel[3];
 int16_t acc_25deg = 0;
 int32_t  BaroAlt;
-int16_t  sonarAlt;           //to think about the unit
+int16_t  sonarAlt;           // in cm
 int32_t  EstAlt;             // in cm
 int16_t  BaroPID = 0;
-int32_t  AltHold;
+int32_t  AltHold;             // in cm
 int16_t  errorAltitudeI = 0;
 float magneticDeclination = 0.0f; // calculated at startup from config
 float accVelScale;
@@ -348,16 +348,18 @@ void getEstimatedAltitude(void)
     static int16_t baroHistTab[BARO_TAB_SIZE_MAX];
     static int8_t baroHistIdx;
     static int32_t baroHigh;
+    static int32_t lastBaroHome;
     static int32_t BaroHome;
     uint32_t dTime;
     int16_t error;
     float invG;
     int16_t accZ;
+    static int16_t acc_1G_calculated;
     static float vel = 0.0f;
     static int16_t lastSonarAlt = 0;
     static int32_t lastBaroAlt;
     float baroVel;
-	static uint8_t sonarErrorCount=0;
+    static uint8_t sonarErrorCount=0;
 
     if ((int32_t)(currentTime - deadLine) < UPDATE_INTERVAL)
         return;
@@ -377,17 +379,17 @@ void getEstimatedAltitude(void)
     EstAlt = EstAlt * cfg.baro_noise_lpf + (baroHigh * 10.0f / (cfg.baro_tab_size - 1)) * (1.0f - cfg.baro_noise_lpf); // additional LPF to reduce baro noise
     else
     {
-        if(!f.ARMED) //init offset till motors not armed
-        { 
-            BaroHome = BaroHome*0.9f + (baroHigh*10.0f/(cfg.baro_tab_size - 1))*0.1f; // play with optimal coef. here
-        }
+        //if(!f.ARMED) //init offset till motors not armed
+        //{ 
+        //    BaroHome = BaroHome*0.985f + (baroHigh*10.0f/(cfg.baro_tab_size - 1))*0.015f; // play with optimal coef. here
+        //}
 
         if(sonarAlt <0 || sonarAlt> 1000) // needs better implementation
                 {
                 sonarAlt = lastSonarAlt;//error-> keep last value
                 sonarErrorCount++;
 
-                if(errorcount > 20) //avoid that sonarAlt gets stuck at the same value for too long and switch to baro
+                if(sonarErrorCount > 40) //avoid that sonarAlt gets stuck at the same value for too long and switch to baro
                     {
                     sonarAlt = 3000;
                     lastSonarAlt = 3000;
@@ -398,8 +400,11 @@ void getEstimatedAltitude(void)
 
         if(sonarAlt < 200 && sonarAlt!=0)//under 2.0m height -> use sonar 
         {
-            EstAlt = EstAlt*0.1f + (BaroHome+sonarAlt)*0.9f;
-            BaroHome = BaroHome*0.9375f + ((baroHigh*10.0f/(cfg.baro_tab_size - 1))-sonarAlt)*0.0625f; //update Barohome
+            lastBaroHome = BaroHome;
+            BaroHome = BaroHome * cfg.baro_home_lpf + ((baroHigh*10.0f/(cfg.baro_tab_size - 1))-sonarAlt) * (1.0f - cfg.baro_home_lpf); //update Barohome
+            AltHold = AltHold + (BaroHome - lastBaroHome); //compensate Baro drift when sonar is in range
+            EstAlt = BaroHome+sonarAlt;
+            debug[3] = BaroHome/10;
         }
         else //above 2m
         {
@@ -419,7 +424,16 @@ void getEstimatedAltitude(void)
     // projection of ACC vector to global Z, with 1G subtructed
     // Math: accZ = A * G / |G| - 1G
     invG = InvSqrt(isq(EstG.V.X) + isq(EstG.V.Y) + isq(EstG.V.Z));
-    accZ = (accLPFVel[ROLL] * EstG.V.X + accLPFVel[PITCH] * EstG.V.Y + accLPFVel[YAW] * EstG.V.Z) * invG - acc_1G; 
+    accZ = (accLPFVel[ROLL] * EstG.V.X + accLPFVel[PITCH] * EstG.V.Y + accLPFVel[YAW] * EstG.V.Z) * invG;
+
+    acc_1G_calculated = acc_1G*6;
+    if (!f.ARMED)
+    {
+        acc_1G_calculated -= acc_1G_calculated/6;
+        acc_1G_calculated += accZ;
+    }
+
+    accZ -= acc_1G_calculated/6;
     accZ = applyDeadband16(accZ, acc_1G / cfg.accz_deadband);
     debug[0] = accZ;
 
@@ -435,7 +449,7 @@ void getEstimatedAltitude(void)
     // apply Complimentary Filter to keep near zero caluculated velocity based on baro velocity
     vel = vel * cfg.baro_cf + baroVel * (1.0f - cfg.baro_cf);
     // vel = constrain(vel, -300, 300); // constrain velocity +/- 300cm/s
-    debug[3] = vel;
+    //debug[3] = vel;
     // debug[3] = applyDeadbandFloat(vel, 5);
 
     // D

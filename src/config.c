@@ -186,8 +186,10 @@ static void resetConf(void)
     cfg.mpu6050_scale = 1; // fuck invensense
     cfg.baro_tab_size = 21;
     cfg.baro_noise_lpf = 0.6f;
+    cfg.baro_home_lpf = 0.99f; //play with value for best performance
     cfg.baro_cf = 0.985f;
-    cfg.sonar_althold = 0;
+    // cfg.sonar_althold = 0;
+    // cfg.sonar_pinout = 0;
     cfg.moron_threshold = 32;
     cfg.gyro_smoothing_factor = 0x00141403;     // default factors of 20, 20, 3 for R/P/Y
     cfg.vbatscale = 110;
