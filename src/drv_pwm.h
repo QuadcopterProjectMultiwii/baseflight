@@ -11,6 +11,7 @@ typedef struct drv_pwm_config_t {
     bool useServos;
     bool extraServos;    // configure additional 4 channels in PPM mode as servos, not motors
     bool airplane;       // fixed wing hardware config, lots of servos etc
+    bool ledToggle;      // Use an RC input for toggling an output
     uint8_t adcChannel;  // steal one RC input for current sensor
     uint16_t motorPwmRate;
     uint16_t servoPwmRate;

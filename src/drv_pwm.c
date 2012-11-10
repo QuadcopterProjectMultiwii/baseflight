@@ -123,16 +123,16 @@ extern int16_t failsafeCnt;
 
 static const uint8_t multiPPM[] = {
     PWM1 | TYPE_IP,     // PPM input
+    PWM5 | TYPE_M,      // Swap to servo if needed
+    PWM6 | TYPE_M,      // Swap to servo if needed
+    PWM7 | TYPE_M,      // Swap to servo if needed
+    PWM8 | TYPE_M,      // Swap to servo if needed
     PWM9 | TYPE_M,      // Swap to servo if needed
     PWM10 | TYPE_M,     // Swap to servo if needed
     PWM11 | TYPE_M,
     PWM12 | TYPE_M,
     PWM13 | TYPE_M,
     PWM14 | TYPE_M,
-    PWM5 | TYPE_M,      // Swap to servo if needed
-    PWM6 | TYPE_M,      // Swap to servo if needed
-    PWM7 | TYPE_M,      // Swap to servo if needed
-    PWM8 | TYPE_M,      // Swap to servo if needed
     0xFF
 };
 
@@ -276,6 +276,10 @@ static void pwmGPIOConfig(GPIO_TypeDef *gpio, uint32_t pin, uint8_t input)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
     GPIO_Init(gpio, &GPIO_InitStructure);
 }
+
+
+//period is 0-0xffff fraction of 1mhz for 1 perioud
+
 
 static pwmPortData_t *pwmOutConfig(uint8_t port, uint16_t period, uint16_t value)
 {
@@ -456,6 +460,10 @@ bool pwmInit(drv_pwm_config_t *init)
         // skip ADC for powerMeter if configured
         if (init->adcChannel && (init->adcChannel == PWM2 || init->adcChannel == PWM8))
             continue;
+
+        //Skip the pin we'll be use for the led output
+        if (init->ledToggle && ( port == PWM2 ) )
+        	continue;
 
         // hacks to allow current functionality
         if ( ( mask & (TYPE_IP | TYPE_IW) ) && !init->enableInput)

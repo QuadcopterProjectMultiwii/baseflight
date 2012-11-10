@@ -20,17 +20,20 @@ static void ledDisable() {
 
 
 void ledToggleInit( bool enabled ) {
-    GPIO_InitTypeDef GPIO_InitStructure;
 	ledEnabled = enabled;
+//	printf( "Led State %d", enabled );
 	if ( !ledEnabled )
 		return;
-	ledDisable();
+    GPIO_InitTypeDef GPIO_InitStructure;
 	//Set the led pin to be an output
     GPIO_InitStructure.GPIO_Pin = LEDTOGGLE_PIN;
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_2MHz;
     //Set the pin in push/pull mode
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
     GPIO_Init( LEDTOGGLE_GPIO, &GPIO_InitStructure);
+
+    ledDisable();
+
 }
 
 void ledToggleUpdate( bool activated ) {

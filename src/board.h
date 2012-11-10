@@ -49,6 +49,7 @@ typedef enum {
     FEATURE_SONAR = 1 << 10,
     FEATURE_TELEMETRY = 1 << 11,
     FEATURE_POWERMETER = 1 << 12,
+    FEATURE_LEDTOGGLE = 1 << 13,
 } AvailableFeatures;
 
 typedef enum {

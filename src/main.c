@@ -59,8 +59,6 @@ int main(void)
 
     serialInit(cfg.serial_baudrate);
 
-    //Init the led toggle
-    ledToggleInit( true );
 
     // We have these sensors
 #ifndef FY90Q
@@ -101,6 +99,7 @@ int main(void)
     pwm_params.extraServos = cfg.gimbal_flags & GIMBAL_FORWARDAUX;
     pwm_params.motorPwmRate = cfg.motor_pwm_rate;
     pwm_params.servoPwmRate = cfg.servo_pwm_rate;
+    pwm_params.ledToggle = pwm_params.usePPM && feature( FEATURE_LEDTOGGLE );
     switch (cfg.power_adc_channel) {
         case 1:
             pwm_params.adcChannel = PWM2;
@@ -114,9 +113,11 @@ int main(void)
     }
 
     pwmInit(&pwm_params);
-
     // configure PWM/CPPM read function. spektrum will override that
     rcReadRawFunc = pwmReadRawRC;
+
+    //Init the led toggle
+    ledToggleInit( pwm_params.ledToggle );
 
     LED1_ON;
     LED0_OFF;

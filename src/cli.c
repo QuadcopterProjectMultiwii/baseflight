@@ -40,7 +40,7 @@ const char * const mixerNames[] = {
 const char * const featureNames[] = {
     "PPM", "VBAT", "INFLIGHT_ACC_CAL", "SPEKTRUM", "MOTOR_STOP",
     "SERVO_TILT", "GYRO_SMOOTHING", "LED_RING", "GPS",
-    "FAILSAFE", "SONAR", "TELEMETRY",
+    "FAILSAFE", "SONAR", "TELEMETRY", "POWERMETER", "LED_TOGGLE",
     NULL
 };
 
@@ -64,7 +64,7 @@ typedef struct {
 const clicmd_t cmdTable[] = {
     { "cmix", "design custom mixer", cliCMix },
     { "defaults", "reset to defaults and reboot", cliDefaults },
-    { "exit", "", cliExit },
+    { "exit", "no save and reboot", cliExit },
     { "feature", "list or -val or val", cliFeature },
     { "help", "", cliHelp },
     { "map", "mapping of rc channel order", cliMap },
@@ -476,19 +476,15 @@ static void cliDefaults(char *cmdline)
 {
     uartPrint("Resetting to defaults...\r\n");
     checkFirstTime(true);
-    uartPrint("Rebooting...");
-    delay(10);
-    systemReset(false);
+    //Do a regular exit
+    cliExit( cmdline );
 }
 
 static void cliExit(char *cmdline)
 {
-    uartPrint("\r\nLeaving CLI mode...\r\n");
-    memset(cliBuffer, 0, sizeof(cliBuffer));
-    bufferIndex = 0;
-    cliMode = 0;
-    // save and reboot... I think this makes the most sense
-    cliSave(cmdline);
+    uartPrint("Rebooting...");
+    delay(10);
+    systemReset(false);
 }
 
 static void cliFeature(char *cmdline)
